@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('tel', 15)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('role', 10)->default('user');   // admin | user
+            $table->boolean('is_active')->default(true);   // false = tài khoản bị khóa
             $table->rememberToken();
             $table->timestamps();
         });
