@@ -1,0 +1,789 @@
+/* ==========================================================================
+   LIBRARY MANAGEMENT SYSTEM - DESIGN SYSTEM
+   Tone màu chủ đạo: #821827 (Deep Wine Crimson)
+   Phong cách: Classical Elegance x Modern SSR Architecture
+   ========================================================================== */
+
+:root {
+    --lib-primary: #821827;
+    --lib-primary-hover: #6a131f;
+    --lib-primary-dark: #4d0d17;
+    --lib-primary-light: #9c2435;
+    --lib-primary-rgb: 130, 24, 39;
+    --lib-primary-glow: rgba(130, 24, 39, 0.45);
+    --lib-primary-glow-hover: rgba(130, 24, 39, 0.65);
+
+    --lib-accent-gold: #c99d66;
+    --lib-accent-gold-light: #e8d7be;
+    --lib-accent-gold-dark: #9b7038;
+
+    --lib-bg-page: #f8f6f2;
+    --lib-bg-surface: #ffffff;
+    --lib-border: #ede4d8;
+    --lib-border-soft: #f0e6e7;
+
+    --lib-text-main: #2b2223;
+    --lib-text-muted: #6e6566;
+    --lib-text-light: #ffffff;
+
+    --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* ==========================================================================
+   GLOBAL RESET & BASE STYLES
+   ========================================================================== */
+body {
+    font-family: var(--font-sans);
+    color: var(--lib-text-main);
+    background-color: var(--lib-bg-page);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, .font-serif, .brand-title {
+    font-family: var(--font-serif);
+}
+
+a {
+    color: var(--lib-primary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+a:hover {
+    color: var(--lib-primary-hover);
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   MÀN HÌNH ĐĂNG NHẬP (LOGIN PAGE)
+   Bám sát nguyên bản ảnh mẫu: Tone #821827, Đồ họa Wave, Glow Pill Inputs
+   ========================================================================== */
+.login-page {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+/* --- Bên trái: Form đăng nhập --- */
+.login-left {
+    flex: 1 1 58%;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 4rem 2.5rem 3rem;
+    position: relative;
+    z-index: 5;
+}
+
+.login-form-wrapper {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.login-title {
+    font-family: var(--font-serif);
+    color: var(--lib-primary);
+    font-size: 2.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    margin-bottom: 2.25rem;
+    text-transform: uppercase;
+}
+
+/* Input dạng viên thuốc (Pill shape) với nền đỏ #821827 và hiệu ứng phát quang */
+.login-input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.login-input {
+    width: 100%;
+    height: 52px;
+    background-color: var(--lib-primary);
+    color: #ffffff !important;
+    border: none;
+    border-radius: 9999px;
+    padding: 0 1.85rem;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    box-shadow: 0 0 18px 2px var(--lib-primary-glow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login-input::placeholder {
+    color: rgba(255, 255, 255, 0.72);
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+}
+
+.login-input:focus {
+    background-color: var(--lib-primary-hover);
+    outline: none;
+    box-shadow: 0 0 26px 4px var(--lib-primary-glow-hover);
+    color: #ffffff;
+}
+
+/* Nút ẩn/hiện mật khẩu */
+.password-toggle-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 1.15rem;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s;
+    z-index: 3;
+}
+
+.password-toggle-btn:hover {
+    color: #ffffff;
+}
+
+/* Ghi nhớ & Quên mật khẩu */
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0.5rem 1.75rem;
+    font-size: 0.92rem;
+}
+
+.remember-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--lib-text-muted);
+    cursor: pointer;
+    user-select: none;
+}
+
+.remember-label input[type="checkbox"] {
+    accent-color: var(--lib-primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.forgot-link {
+    color: var(--lib-primary);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.forgot-link:hover {
+    color: var(--lib-primary-dark);
+    text-decoration: underline;
+}
+
+/* Nút đăng nhập */
+.login-button {
+    background-color: var(--lib-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 9999px;
+    padding: 0.65rem 3.25rem;
+    min-width: 175px;
+    height: 48px;
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: 0 0 22px 3px var(--lib-primary-glow);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-button:hover {
+    background-color: var(--lib-primary-hover);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px 6px var(--lib-primary-glow-hover);
+}
+
+.login-button:active {
+    transform: translateY(0);
+}
+
+/* Đường dẫn đăng ký */
+.register-link {
+    margin-top: 1.6rem;
+    font-size: 0.95rem;
+    color: var(--lib-text-muted);
+}
+
+.register-link a {
+    color: var(--lib-primary);
+    font-weight: 600;
+    margin-left: 0.25rem;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+/* Thanh tài khoản mẫu (Demo Accounts) */
+.demo-accounts {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed #e8d0d3;
+    font-size: 0.82rem;
+    color: var(--lib-text-muted);
+}
+
+.demo-btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+}
+
+.demo-chip {
+    background: #fbf2f3;
+    border: 1px solid #ebd0d4;
+    color: var(--lib-primary);
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.demo-chip:hover {
+    background: var(--lib-primary);
+    color: #ffffff;
+}
+
+/* --- Đường cong chia cắt (Wave Divider) --- */
+.login-wave-divider {
+    position: absolute;
+    top: 0;
+    right: -1px;
+    bottom: 0;
+    width: 90px;
+    height: 100%;
+    z-index: 6;
+    pointer-events: none;
+    filter: drop-shadow(8px 0 14px rgba(0, 0, 0, 0.35));
+}
+
+/* --- Bên phải: Thương hiệu & Thông tin hệ thống --- */
+.login-right {
+    flex: 1 1 42%;
+    position: relative;
+    background: #4a0c14;
+    background-image:
+        linear-gradient(135deg, rgba(74, 11, 20, 0.92) 0%, rgba(130, 24, 39, 0.88) 100%),
+        url('/images/vintage-book-pattern.jpg');
+    background-size: cover;
+    background-position: center right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* Lớp texture hoa văn cổ kính */
+.login-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(130, 24, 39, 0.3) 0%, rgba(30, 5, 8, 0.85) 100%);
+    pointer-events: none;
+}
+
+.library-brand {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 420px;
+}
+
+.library-logo-container {
+    margin-bottom: 1.5rem;
+    animation: fadeInDown 0.8s ease;
+}
+
+.library-logo-img {
+    width: 145px;
+    height: auto;
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.45));
+    transition: transform 0.4s ease;
+}
+
+.library-logo-img:hover {
+    transform: scale(1.05);
+}
+
+.library-brand-name {
+    font-family: var(--font-serif);
+    font-size: 2.35rem;
+    font-weight: 500;
+    line-height: 1.22;
+    letter-spacing: 0.22em;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 1.5rem;
+}
+
+.system-info-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.system-info-title {
+    font-family: var(--font-serif);
+    color: var(--lib-accent-gold);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.system-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+}
+
+.system-badge {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 0.78rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* ==========================================================================
+   MAIN NAVBAR & APPLICATION LAYOUT
+   ========================================================================== */
+.lib-navbar {
+    background: linear-gradient(135deg, var(--lib-primary-dark) 0%, var(--lib-primary) 100%);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+    border-bottom: 2px solid var(--lib-accent-gold);
+    padding: 0.65rem 0;
+}
+
+.lib-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.lib-brand-icon {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+}
+
+.lib-brand-text {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #ffffff;
+}
+
+.lib-navbar .nav-link {
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.lib-navbar .nav-link:hover,
+.lib-navbar .nav-link.active {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.lib-user-pill {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 9999px;
+    padding: 0.35rem 0.85rem;
+    color: #ffffff !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   BUTTONS & COMMON UI
+   ========================================================================== */
+.btn-lib-primary {
+    background-color: var(--lib-primary);
+    border-color: var(--lib-primary);
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.25s ease;
+}
+
+.btn-lib-primary:hover,
+.btn-lib-primary:focus {
+    background-color: var(--lib-primary-hover);
+    border-color: var(--lib-primary-hover);
+    color: #ffffff;
+    box-shadow: 0 4px 12px var(--lib-primary-glow);
+}
+
+.btn-lib-outline {
+    background-color: transparent;
+    border: 1.5px solid var(--lib-primary);
+    color: var(--lib-primary);
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.45rem 1.2rem;
+    transition: all 0.25s ease;
+}
+
+.btn-lib-outline:hover {
+    background-color: var(--lib-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 12px var(--lib-primary-glow);
+}
+
+/* Badges trạng thái mượn trả */
+.badge-status {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-pending {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.badge-borrowing {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.badge-returned {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.badge-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.badge-overdue {
+    background-color: #721c24;
+    color: #ffffff;
+    border: 1px solid #491217;
+    animation: pulseOverdue 2s infinite;
+}
+
+@keyframes pulseOverdue {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+}
+
+/* ==========================================================================
+   BOOK CATALOG CARDS
+   ========================================================================== */
+.book-card {
+    background: #ffffff;
+    border: 1px solid var(--lib-border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 24px rgba(130, 24, 39, 0.12);
+    border-color: #e2c0c4;
+}
+
+.book-cover-wrap {
+    height: 240px;
+    background: linear-gradient(135deg, #f5efea 0%, #ebe0d5 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--lib-border);
+}
+
+.book-cover-img {
+    max-height: 210px;
+    max-width: 80%;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: -4px 6px 14px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.book-card:hover .book-cover-img {
+    transform: scale(1.04) rotate(-1deg);
+}
+
+.book-stock-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-weight: 600;
+}
+
+.stock-in {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.stock-out {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.book-card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.book-category-tag {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--lib-primary);
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.book-title {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--lib-text-main);
+    margin-bottom: 0.35rem;
+}
+
+.book-author {
+    font-size: 0.88rem;
+    color: var(--lib-text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.book-footer {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--lib-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ==========================================================================
+   STAT CARDS (DASHBOARD)
+   ========================================================================== */
+.stat-card {
+    background: #ffffff;
+    border: 1px solid var(--lib-border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.stat-card-border-primary {
+    border-left: 5px solid var(--lib-primary);
+}
+
+.stat-card-border-gold {
+    border-left: 5px solid var(--lib-accent-gold);
+}
+
+.stat-card-border-success {
+    border-left: 5px solid #28a745;
+}
+
+.stat-card-border-warning {
+    border-left: 5px solid #ffc107;
+}
+
+.stat-icon {
+    position: absolute;
+    right: 1.25rem;
+    top: 1.25rem;
+    font-size: 2.2rem;
+    opacity: 0.18;
+    color: var(--lib-primary);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--lib-text-muted);
+    margin-bottom: 0.35rem;
+}
+
+.stat-value {
+    font-family: var(--font-serif);
+    font-size: 2.15rem;
+    font-weight: 700;
+    color: var(--lib-text-main);
+    line-height: 1;
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+.lib-footer {
+    margin-top: auto;
+    background-color: #23060a;
+    color: rgba(255, 255, 255, 0.75);
+    border-top: 3px solid var(--lib-primary);
+    padding: 2.5rem 0 1.5rem;
+    font-size: 0.9rem;
+}
+
+.lib-footer a {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.lib-footer a:hover {
+    color: var(--lib-accent-gold);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (MEDIA QUERIES)
+   ========================================================================== */
+@media (max-width: 991.98px) {
+    .login-page {
+        flex-direction: column-reverse;
+        min-height: auto;
+    }
+
+    .login-wave-divider {
+        display: none;
+    }
+
+    .login-right {
+        padding: 3rem 1.5rem 2.5rem;
+        flex: none;
+    }
+
+    .login-left {
+        padding: 3rem 1.5rem;
+        flex: none;
+    }
+
+    .login-title {
+        font-size: 2.25rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .library-brand-name {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .login-left {
+        padding: 2rem 1.25rem;
+    }
+
+    .login-title {
+        font-size: 1.95rem;
+    }
+
+    .login-input {
+        height: 48px;
+        font-size: 0.95rem;
+    }
+
+    .login-button {
+        width: 100%;
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

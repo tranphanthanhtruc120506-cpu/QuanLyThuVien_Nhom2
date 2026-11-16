@@ -29,7 +29,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -43,20 +43,25 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        // Kiểm tra tài khoản có tồn tại và bị khóa không
-        $user = User::where('email', $this->input('email'))->first();
+        $loginInput = $this->input('email');
+        $isEmail = filter_var($loginInput, FILTER_VALIDATE_EMAIL);
 
+        // Tìm user theo email hoặc theo username (name)
+        $user = $isEmail
+            ? User::where('email', $loginInput)->first()
+            : User::where('email', $loginInput)->orWhere('name', $loginInput)->first();
+
+        // Kiểm tra tài khoản có tồn tại và bị khóa không
         if ($user && !$user->is_active) {
             throw ValidationException::withMessages([
                 'email' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
             ]);
         }
 
-        // Kiểm tra email và mật khẩu
-        if (!Auth::attempt(
-            $this->only('email', 'password'),
-            $this->boolean('remember')
-        )) {
+        // Đăng nhập bằng email hoặc username
+        $credentials = ['email' => $user ? $user->email : $loginInput, 'password' => $this->input('password')];
+
+        if (!Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

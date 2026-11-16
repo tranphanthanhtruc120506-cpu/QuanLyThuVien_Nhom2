@@ -1,52 +1,131 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+    <div class="login-page">
+        <!-- Bên trái: Form đăng ký tài khoản -->
+        <div class="login-left">
+            <div class="login-form-wrapper" style="max-width: 480px;">
+                <h1 class="login-title" style="font-size: 2.35rem; margin-bottom: 1.5rem;">REGISTER</h1>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
+                @if ($errors->any())
+                    <div class="alert alert-danger py-2 px-3 mb-4 rounded-3 text-start small" role="alert">
+                        <ul class="mb-0 ps-3">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+                    <!-- Họ và tên -->
+                    <div class="login-input-group mb-3">
+                        <input
+                            type="text"
+                            name="name"
+                            id="regName"
+                            class="form-control login-input"
+                            placeholder="Full Name / Họ và tên"
+                            value="{{ old('name') }}"
+                            required
+                            autofocus
+                            autocomplete="name"
+                        >
+                    </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
+                    <!-- Email -->
+                    <div class="login-input-group mb-3">
+                        <input
+                            type="email"
+                            name="email"
+                            id="regEmail"
+                            class="form-control login-input"
+                            placeholder="Email Address"
+                            value="{{ old('email') }}"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+
+                    <!-- Số điện thoại -->
+                    <div class="login-input-group mb-3">
+                        <input
+                            type="tel"
+                            name="tel"
+                            id="regTel"
+                            class="form-control login-input"
+                            placeholder="Phone Number / Số điện thoại"
+                            value="{{ old('tel') }}"
+                            autocomplete="tel"
+                        >
+                    </div>
+
+                    <!-- Mật khẩu -->
+                    <div class="login-input-group mb-3">
+                        <input
                             type="password"
                             name="password"
-                            required autocomplete="new-password" />
+                            id="regPassword"
+                            class="form-control login-input"
+                            placeholder="Password / Mật khẩu"
+                            required
+                            autocomplete="new-password"
+                        >
+                    </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
+                    <!-- Xác nhận mật khẩu -->
+                    <div class="login-input-group mb-4">
+                        <input
                             type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+                            name="password_confirmation"
+                            id="regPasswordConfirm"
+                            class="form-control login-input"
+                            placeholder="Confirm Password / Nhập lại mật khẩu"
+                            required
+                            autocomplete="new-password"
+                        >
+                    </div>
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                    <!-- Nút Đăng ký -->
+                    <button type="submit" class="btn login-button w-100 mb-3">
+                        CREATE ACCOUNT
+                    </button>
+
+                    <div class="register-link mt-2">
+                        Already have an account?
+                        <a href="{{ route('login') }}">Login</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Đường lượn sóng phân tách -->
+            <svg class="login-wave-divider" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M0,0 L50,0 C68,140 85,280 62,440 C38,620 90,820 68,1000 L0,1000 Z" fill="#ffffff"></path>
+            </svg>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        <!-- Bên phải: Thương hiệu -->
+        <div class="login-right">
+            <div class="library-brand">
+                <div class="library-logo-container">
+                    <img src="{{ asset('images/library-logo.png') }}"
+                         alt="Library System Logo"
+                         class="library-logo-img">
+                </div>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+                <div class="library-brand-name">
+                    LIBRARY<br>SYSTEM
+                </div>
+
+                <div class="system-info-card">
+                    <div class="system-info-title">
+                        <i class="bi bi-person-plus-fill me-1"></i> Tham Gia Thư Viện
+                    </div>
+                    <p class="mb-0">
+                        Đăng ký tài khoản độc giả ngay hôm nay để mượn hàng ngàn đầu sách giá trị, theo dõi lịch sử đọc và tiếp cận nguồn tri thức phong phú.
+                    </p>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
 </x-guest-layout>
