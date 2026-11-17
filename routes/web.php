@@ -3,6 +3,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowRecordController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\AuthorController as AdminAuthorController;
+use App\Http\Controllers\Admin\BookController as AdminBookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,6 +48,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/borrows/{borrowRecord}/approve', [AdminController::class, 'approve'])->name('borrows.approve');
     Route::post('/borrows/{borrowRecord}/reject', [AdminController::class, 'reject'])->name('borrows.reject');
     Route::post('/borrows/{borrowRecord}/return', [AdminController::class, 'returnBook'])->name('borrows.return');
+
+    // Quản lý sách và tác giả (Hào)
+    Route::resource('books', AdminBookController::class)->except('show');
+    Route::resource('authors', AdminAuthorController::class)->except('show');
 });
 
 require __DIR__.'/auth.php';

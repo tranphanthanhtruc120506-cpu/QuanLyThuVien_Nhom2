@@ -73,7 +73,7 @@
                 <div class="book-card">
                     <div class="book-cover-wrap">
                         @if($book->image)
-                            <img src="{{ asset($book->image) }}" alt="{{ $book->title }}" class="book-cover-img">
+                            <img src="{{ $book->image_url }}" alt="{{ $book->title }}" class="book-cover-img">
                         @else
                             <div class="book-cover-img d-flex flex-column align-items-center justify-content-center p-3 text-center text-white"
                                  style="width: 145px; height: 195px; background: linear-gradient(135deg, #821827, #4d0d17);">

@@ -57,5 +57,34 @@ class LibrarySeeder extends Seeder
                 'description' => "Mô tả mẫu cho cuốn \"$title\".",
             ]);
         }
+
+        // Gán ảnh bìa (ảnh nằm trong public/images/books)
+        $covers = [
+            'Chí Phèo' => 'chi-pheo.png',
+            'Cho tôi xin một vé đi tuổi thơ' => 'cho-toi-xin-mot-ve-di-tuoi-tho.png',
+            'Clean Agile' => 'clean-agile.png',
+            'Clean Architecture' => 'clean-architecture.png',
+            'Clean Code' => 'clean-code.png',
+            'Cô gái đến từ hôm qua' => 'co-gai-den-tu-hom-qua.png',
+            'Đắc nhân tâm' => 'dac-nhan-tam.png',
+            'Dế Mèn phiêu lưu ký' => 'de-men-phieu-luu-ky.png',
+            'Đời thừa' => 'doi-thua.png',
+            'Kính vạn hoa' => 'kinh-van-hoa.png',
+            'Lão Hạc' => 'lao-hac.png',
+            'Mắt biếc' => 'mat-biec.png',
+            'Nghệ thuật nói trước công chúng' => 'nghe-thuat-noi-truoc-cong-chung.png',
+            'Ngồi khóc trên cây' => 'ngoi-khoc-tren-cay.png',
+            'Quẳng gánh lo đi và vui sống' => 'quang-ganh-lo-di-va-vui-song.png',
+            'Sống mòn' => 'song-mon.png',
+            'The Clean Coder' => 'the-clean-coder.png',
+            'Tôi thấy hoa vàng trên cỏ xanh' => 'toi-thay-hoa-vang-tren-co-xanh.png',
+            'Truyện Tây Bắc' => 'truyen-tay-bac.png',
+        ];
+
+        foreach ($covers as $title => $filename) {
+            Book::where('title', $title)->update([
+                'image' => 'images/books/' . $filename,
+            ]);
+        }
     }
 }

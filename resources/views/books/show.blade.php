@@ -17,7 +17,7 @@
         <div class="bg-white p-4 rounded-4 border shadow-sm sticky-top" style="top: 2rem;">
             <div class="mb-4 d-flex justify-content-center">
                 @if($book->image)
-                    <img src="{{ asset($book->image) }}"
+                    <img src="{{ $book->image_url }}"
                          alt="{{ $book->title }}"
                          class="img-fluid rounded-3 shadow"
                          style="max-height: 380px;">

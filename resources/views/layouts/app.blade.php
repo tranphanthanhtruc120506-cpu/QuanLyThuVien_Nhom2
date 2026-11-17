@@ -64,6 +64,18 @@
                                     <i class="bi bi-card-checklist me-1"></i> Duyệt Phiếu Mượn
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.books.*') ? 'active' : '' }}"
+                                   href="{{ route('admin.books.index') }}">
+                                    <i class="bi bi-journal-bookmark me-1"></i> Quản Lý Sách
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.authors.*') ? 'active' : '' }}"
+                                   href="{{ route('admin.authors.index') }}">
+                                    <i class="bi bi-person-lines-fill me-1"></i> Quản Lý Tác Giả
+                                </a>
+                            </li>
                         @else
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('borrows.*') ? 'active' : '' }}"
@@ -206,4 +218,3 @@
     @stack('scripts')
 </body>
 </html>
->>>>>>> 6401a3a923d7c7634b750b42c043dbca1b51f8e4

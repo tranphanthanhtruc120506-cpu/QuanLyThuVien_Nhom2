@@ -30,6 +30,19 @@ class Book extends Model
         return $this->hasMany(BorrowRecord::class);
     }
 
+    // Đường dẫn ảnh bìa dùng chung cho mọi view.
+    // Ảnh upload từ admin: "books/xxx.jpg" (storage), ảnh seed: "images/books/xxx.png" (public).
+    public function getImageUrlAttribute(): ?string
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        return str_starts_with($this->image, 'books/')
+            ? asset('storage/' . $this->image)
+            : asset($this->image);
+    }
+
     public function isAvailable(): bool
     {
         return $this->quantity > 0;
