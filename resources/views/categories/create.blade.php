@@ -1,0 +1,37 @@
+@extends('layouts.app')
+
+@section('title', 'Thêm thể loại')
+
+@section('content')
+<div class="container py-4" style="max-width: 640px;">
+    <h4 class="mb-3">Thêm thể loại</h4>
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('admin.categories.store') }}" method="POST" class="card card-body">
+        @csrf
+        <div class="mb-3">
+            <label for="name" class="form-label">Tên thể loại <span class="text-danger">*</span></label>
+            <input type="text" id="name" name="name" value="{{ old('name') }}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Mô tả</label>
+            <textarea id="description" name="description" rows="3" class="form-control">{{ old('description') }}</textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Lưu thể loại</button>
+            <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </form>
+</div>
+@endsection
