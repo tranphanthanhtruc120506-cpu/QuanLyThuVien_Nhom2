@@ -12,7 +12,7 @@ use Illuminate\Http\RedirectResponse;
 class BookController extends Controller
 {
     /**
-     * Danh sách sách trong thư viện (Tra cứu, Lọc theo thể loại, Tìm kiếm)
+     * Danh sách sách trong thư viện (Tra cứu, Lọc theo thể loại, Tìm kiếm + AJAX)
      */
     public function index(Request $request): View
     {
@@ -41,6 +41,11 @@ class BookController extends Controller
 
         $books = $query->latest()->paginate(12)->withQueryString();
         $categories = Category::withCount('books')->get();
+
+        // Nếu là yêu cầu AJAX thì chỉ trả về phần HTML danh sách sách
+        if ($request->ajax()) {
+            return view('books.partials.book-list', compact('books'));
+        }
 
         return view('books.index', compact('books', 'categories'));
     }
@@ -75,17 +80,17 @@ class BookController extends Controller
     {
         $user = $request->user();
 
-        // Kiểm tra độc giả có bị khóa tài khoản không
+        // 1. Kiểm tra độc giả có bị khóa tài khoản không
         if (!$user->is_active) {
             return back()->with('error', 'Tài khoản của bạn đang bị khóa, không thể thực hiện mượn sách.');
         }
 
-        // Kiểm tra số lượng tồn kho
+        // 2. Kiểm tra số lượng tồn kho
         if ($book->quantity <= 0) {
             return back()->with('error', 'Rất tiếc, đầu sách này hiện đã hết trong kho thư viện.');
         }
 
-        // Kiểm tra xem độc giả đã mượn hoặc đang chờ duyệt cuốn sách này chưa
+        // 3. Kiểm tra xem độc giả đã mượn hoặc đang chờ duyệt cuốn sách này chưa
         $existing = BorrowRecord::where('user_id', $user->id)
             ->where('book_id', $book->id)
             ->whereIn('status', [BorrowRecord::PENDING, BorrowRecord::BORROWING])
@@ -96,6 +101,15 @@ class BookController extends Controller
                 ? 'Bạn đã có một yêu cầu mượn cuốn sách này đang chờ thủ thư phê duyệt.'
                 : 'Bạn đang mượn cuốn sách này, vui lòng hoàn trả trước khi mượn tiếp.';
             return back()->with('error', $msg);
+        }
+
+        // 4. Kiểm tra giới hạn tối đa 3 phiếu đang xử lý (pending + borrowing)
+        $activeCount = BorrowRecord::where('user_id', $user->id)
+            ->whereIn('status', [BorrowRecord::PENDING, BorrowRecord::BORROWING])
+            ->count();
+
+        if ($activeCount >= 3) {
+            return back()->with('error', 'Bạn chỉ được mượn hoặc đặt tối đa 3 cuốn sách cùng lúc.');
         }
 
         // Tạo bản ghi mượn sách mới (trạng thái pending)

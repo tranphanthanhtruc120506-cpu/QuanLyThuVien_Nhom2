@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\BorrowRecord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -44,7 +45,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Quản lý toàn bộ danh sách phiếu mượn
+     * Quản lý toàn bộ danh sách phiếu mượn (Hỗ trợ cả tải trang thường và AJAX)
      */
     public function borrows(Request $request): View
     {
@@ -70,34 +71,46 @@ class AdminController extends Controller
 
         $records = $query->latest()->paginate(15)->withQueryString();
 
+        // Nếu là yêu cầu AJAX thì chỉ trả về phần HTML của bảng dữ liệu
+        if ($request->ajax()) {
+            return view('admin.partials.borrows-table', compact('records'));
+        }
+
         return view('admin.borrows', compact('records', 'status'));
     }
-
     /**
      * Duyệt yêu cầu mượn sách (Pending -> Borrowing)
      */
     public function approve(BorrowRecord $borrowRecord): RedirectResponse
     {
-        if ($borrowRecord->status !== BorrowRecord::PENDING) {
-            return back()->with('error', 'Phiếu mượn không ở trạng thái chờ duyệt.');
+        try {
+            DB::transaction(function () use ($borrowRecord) {
+                $record = BorrowRecord::where('id', $borrowRecord->id)->lockForUpdate()->first();
+                $book   = Book::where('id', $record->book_id)->lockForUpdate()->first();
+
+                if ($record->status !== BorrowRecord::PENDING) {
+                    throw new \Exception('Phiếu mượn không ở trạng thái chờ duyệt hoặc đã được xử lý.');
+                }
+
+                if ($book->quantity <= 0) {
+                    throw new \Exception('Sách này trong kho đã hết, không thể duyệt mượn.');
+                }
+
+                // Giảm số lượng tồn kho của sách đi 1
+                $book->decrement('quantity');
+
+                // Cập nhật ngày mượn và hạn trả (mặc định 14 ngày)
+                $record->update([
+                    'status'      => BorrowRecord::BORROWING,
+                    'borrow_date' => now()->toDateString(),
+                    'due_date'    => now()->addDays(14)->toDateString(),
+                ]);
+            });
+
+            return back()->with('success', 'Đã duyệt yêu cầu mượn sách thành công! Hạn trả: ' . now()->addDays(14)->format('d/m/Y'));
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        $book = $borrowRecord->book;
-        if ($book->quantity <= 0) {
-            return back()->with('error', 'Sách này trong kho đã hết, không thể duyệt mượn.');
-        }
-
-        // Giảm số lượng tồn kho của sách đi 1
-        $book->decrement('quantity');
-
-        // Cập nhật ngày mượn và hạn trả (mặc định 14 ngày)
-        $borrowRecord->update([
-            'status'      => BorrowRecord::BORROWING,
-            'borrow_date' => now()->toDateString(),
-            'due_date'    => now()->addDays(14)->toDateString(),
-        ]);
-
-        return back()->with('success', 'Đã duyệt yêu cầu mượn sách thành công! Hạn trả: ' . now()->addDays(14)->format('d/m/Y'));
     }
 
     /**
@@ -121,19 +134,28 @@ class AdminController extends Controller
      */
     public function returnBook(BorrowRecord $borrowRecord): RedirectResponse
     {
-        if ($borrowRecord->status !== BorrowRecord::BORROWING) {
-            return back()->with('error', 'Phiếu mượn này không ở trạng thái đang mượn.');
+        try {
+            DB::transaction(function () use ($borrowRecord) {
+                $record = BorrowRecord::where('id', $borrowRecord->id)->lockForUpdate()->first();
+                $book   = Book::where('id', $record->book_id)->lockForUpdate()->first();
+
+                if ($record->status !== BorrowRecord::BORROWING) {
+                    throw new \Exception('Phiếu mượn này không ở trạng thái đang mượn hoặc đã được trả.');
+                }
+
+                // Tăng lại số lượng sách trong kho
+                $book->increment('quantity');
+
+                // Ghi nhận ngày trả sách
+                $record->update([
+                    'status'      => BorrowRecord::RETURNED,
+                    'return_date' => now()->toDateString(),
+                ]);
+            });
+
+            return back()->with('success', 'Đã xác nhận trả sách thành công và cập nhật lại kho!');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        // Tăng lại số lượng sách trong kho
-        $borrowRecord->book->increment('quantity');
-
-        // Ghi nhận ngày trả sách
-        $borrowRecord->update([
-            'status'      => BorrowRecord::RETURNED,
-            'return_date' => now()->toDateString(),
-        ]);
-
-        return back()->with('success', 'Đã xác nhận trả sách thành công và cập nhật lại kho!');
     }
 }

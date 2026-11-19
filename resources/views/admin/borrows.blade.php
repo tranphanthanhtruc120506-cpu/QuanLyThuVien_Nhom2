@@ -13,22 +13,27 @@
     </a>
 </div>
 
-<!-- Bộ lọc & Tìm kiếm -->
+<!-- Bộ lọc & Tìm kiếm AJAX -->
 <div class="bg-white p-3 p-md-4 rounded-4 border shadow-sm mb-4">
-    <form method="GET" action="{{ route('admin.borrows') }}" class="row g-3 align-items-center">
+    <form id="borrow-filter-form" method="GET" action="{{ route('admin.borrows') }}" class="row g-3 align-items-center">
         <div class="col-md-6 col-lg-5">
             <div class="input-group">
                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
                 <input type="text"
+                       id="borrow-search-input"
                        name="search"
                        class="form-control border-start-0"
-                       placeholder="Tìm theo tên độc giả, email, tên sách..."
-                       value="{{ request('search') }}">
+                       placeholder="Gõ tên độc giả, email hoặc tên sách để tìm ngay..."
+                       value="{{ request('search') }}"
+                       autocomplete="off">
+                <span id="ajax-loading" class="input-group-text bg-white border-start-0 d-none">
+                    <span class="spinner-border spinner-border-sm text-danger" role="status"></span>
+                </span>
             </div>
         </div>
 
         <div class="col-md-4 col-lg-4">
-            <select name="status" class="form-select" onchange="this.form.submit()">
+            <select id="borrow-status-select" name="status" class="form-select">
                 <option value="">-- Tất cả trạng thái --</option>
                 <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Chờ duyệt (Pending)</option>
                 <option value="borrowing" {{ request('status') === 'borrowing' ? 'selected' : '' }}>Đang mượn (Borrowing)</option>
@@ -40,107 +45,109 @@
 
         <div class="col-md-2 col-lg-3 d-flex gap-2">
             <button type="submit" class="btn btn-lib-primary rounded-pill px-3">Lọc</button>
-            <a href="{{ route('admin.borrows') }}" class="btn btn-light rounded-pill px-3">Đặt lại</a>
+            <button type="button" id="borrow-reset-btn" class="btn btn-light rounded-pill px-3">Đặt lại</button>
         </div>
     </form>
 </div>
 
-<!-- Bảng quản lý phiếu mượn -->
-<div class="bg-white rounded-4 border shadow-sm overflow-hidden">
-    @if($records->count() > 0)
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-4">Mã Phiếu</th>
-                        <th>Độc Giả</th>
-                        <th>Sách Mượn</th>
-                        <th>Ngày Mượn</th>
-                        <th>Hạn Trả</th>
-                        <th>Trạng Thái</th>
-                        <th class="text-end pe-4">Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($records as $rec)
-                        <tr>
-                            <td class="ps-4 fw-bold text-muted">#{{ str_pad($rec->id, 5, '0', STR_PAD_LEFT) }}</td>
-                            <td>
-                                <div class="fw-bold">{{ $rec->user->name ?? 'N/A' }}</div>
-                                <small class="text-muted">{{ $rec->user->email ?? '' }}</small>
-                            </td>
-                            <td>
-                                <div class="fw-semibold text-truncate" style="max-width: 220px;" title="{{ $rec->book->title ?? '' }}">
-                                    {{ $rec->book->title ?? 'N/A' }}
-                                </div>
-                                <small class="text-muted">Kho: {{ $rec->book->quantity ?? 0 }}</small>
-                            </td>
-                            <td>{{ $rec->borrow_date ? $rec->borrow_date->format('d/m/Y') : '—' }}</td>
-                            <td>
-                                @if($rec->due_date)
-                                    <span class="{{ $rec->isOverdue() ? 'text-danger fw-bold' : '' }}">
-                                        {{ $rec->due_date->format('d/m/Y') }}
-                                    </span>
-                                @else
-                                    —
-                                @endif
-                            </td>
-                            <td>
-                                @if($rec->status === \App\Models\BorrowRecord::PENDING)
-                                    <span class="badge-status badge-pending"><i class="bi bi-hourglass-split"></i> Chờ duyệt</span>
-                                @elseif($rec->status === \App\Models\BorrowRecord::BORROWING)
-                                    @if($rec->isOverdue())
-                                        <span class="badge-status badge-overdue"><i class="bi bi-exclamation-octagon"></i> Quá hạn</span>
-                                    @else
-                                        <span class="badge-status badge-borrowing"><i class="bi bi-book-half"></i> Đang mượn</span>
-                                    @endif
-                                @elseif($rec->status === \App\Models\BorrowRecord::RETURNED)
-                                    <span class="badge-status badge-returned"><i class="bi bi-check2-circle"></i> Đã trả ({{ $rec->return_date ? $rec->return_date->format('d/m') : '' }})</span>
-                                @elseif($rec->status === \App\Models\BorrowRecord::REJECTED)
-                                    <span class="badge-status badge-rejected"><i class="bi bi-x-circle"></i> Từ chối</span>
-                                @endif
-                            </td>
-                            <td class="text-end pe-4">
-                                @if($rec->status === \App\Models\BorrowRecord::PENDING)
-                                    <form method="POST" action="{{ route('admin.borrows.approve', $rec) }}" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-success rounded-pill px-2" title="Duyệt cho mượn">
-                                            <i class="bi bi-check-lg"></i> Duyệt
-                                        </button>
-                                    </form>
-                                    <form method="POST" action="{{ route('admin.borrows.reject', $rec) }}" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2" title="Từ chối">
-                                            <i class="bi bi-x-lg"></i> Từ chối
-                                        </button>
-                                    </form>
-                                @elseif($rec->status === \App\Models\BorrowRecord::BORROWING)
-                                    <form method="POST" action="{{ route('admin.borrows.return', $rec) }}" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3"
-                                                onclick="return confirm('Xác nhận độc giả đã trả sách và đưa sách về lại kho?')">
-                                            <i class="bi bi-arrow-return-left me-1"></i> Nhận lại sách
-                                        </button>
-                                    </form>
-                                @else
-                                    <span class="text-muted small">Hoàn tất</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <div class="p-3 border-top d-flex justify-content-center">
-            {{ $records->links('pagination::bootstrap-5') }}
-        </div>
-    @else
-        <div class="text-center py-5">
-            <i class="bi bi-search fs-1 text-muted d-block mb-3"></i>
-            <h5 class="font-serif fw-bold">Không tìm thấy phiếu mượn nào</h5>
-            <p class="text-muted mb-0">Thử thay đổi từ khóa hoặc bộ lọc trạng thái để xem kết quả.</p>
-        </div>
-    @endif
+<!-- Vùng bảng quản lý phiếu mượn được cập nhật bằng AJAX -->
+<div id="borrows-table-container" class="bg-white rounded-4 border shadow-sm overflow-hidden" style="transition: opacity 0.2s;">
+    @include('admin.partials.borrows-table')
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('borrow-filter-form');
+    const searchInput = document.getElementById('borrow-search-input');
+    const statusSelect = document.getElementById('borrow-status-select');
+    const resetBtn = document.getElementById('borrow-reset-btn');
+    const tableContainer = document.getElementById('borrows-table-container');
+    const loadingSpinner = document.getElementById('ajax-loading');
+
+    let debounceTimer = null;
+    let currentController = null;
+
+    function fetchBorrows(customUrl = null) {
+        if (currentController) {
+            currentController.abort();
+        }
+        currentController = new AbortController();
+
+        let targetUrl;
+        if (customUrl) {
+            targetUrl = customUrl;
+        } else {
+            const url = new URL(form.action);
+            const searchVal = searchInput.value.trim();
+            const statusVal = statusSelect.value;
+
+            if (searchVal) url.searchParams.set('search', searchVal);
+            if (statusVal) url.searchParams.set('status', statusVal);
+            targetUrl = url.toString();
+        }
+
+        loadingSpinner.classList.remove('d-none');
+        tableContainer.style.opacity = '0.5';
+
+        fetch(targetUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            },
+            signal: currentController.signal
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Lỗi tải dữ liệu');
+            return response.text();
+        })
+        .then(html => {
+            tableContainer.innerHTML = html;
+            window.history.replaceState({}, '', targetUrl);
+        })
+        .catch(error => {
+            if (error.name !== 'AbortError') {
+                console.error('AJAX search error:', error);
+            }
+        })
+        .finally(() => {
+            loadingSpinner.classList.add('d-none');
+            tableContainer.style.opacity = '1';
+        });
+    }
+
+    // 1. Tự động tìm kiếm khi gõ phím (chờ 350ms sau khi ngừng gõ)
+    searchInput.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => fetchBorrows(), 350);
+    });
+
+    // 2. Tự động lọc khi đổi trạng thái
+    statusSelect.addEventListener('change', function () {
+        fetchBorrows();
+    });
+
+    // 3. Chặn submit tải lại trang khi bấm Enter hoặc nút Lọc
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearTimeout(debounceTimer);
+        fetchBorrows();
+    });
+
+    // 4. Nút Đặt lại bộ lọc bằng AJAX
+    resetBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        statusSelect.value = '';
+        fetchBorrows(form.action);
+    });
+
+    // 5. Phân trang bằng AJAX (không load lại trang khi bấm chuyển trang)
+    tableContainer.addEventListener('click', function (e) {
+        const pageLink = e.target.closest('.pagination a.page-link');
+        if (pageLink) {
+            e.preventDefault();
+            fetchBorrows(pageLink.href);
+        }
+    });
+});
+</script>
 @endsection
