@@ -76,6 +76,24 @@
                                     <i class="bi bi-person-lines-fill me-1"></i> Quản Lý Tác Giả
                                 </a>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                                   href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-collection me-1"></i> Quản Lý Khác
+                                </a>
+                                <ul class="dropdown-menu shadow-sm border-0">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.categories.index') }}">
+                                            <i class="bi bi-tags me-2"></i> Quản Lý Thể Loại
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.users.index') }}">
+                                            <i class="bi bi-people me-2"></i> Quản Lý Độc Giả
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         @else
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('borrows.*') ? 'active' : '' }}"

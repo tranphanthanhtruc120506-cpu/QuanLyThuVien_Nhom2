@@ -30,7 +30,6 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
-            'description' => ['nullable', 'string', 'max:1000'],
         ], [
             'name.required' => 'Vui lòng nhập tên thể loại.',
             'name.unique' => 'Tên thể loại này đã tồn tại.',
@@ -53,7 +52,6 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:categories,name,' . $category->id],
-            'description' => ['nullable', 'string', 'max:1000'],
         ], [
             'name.required' => 'Vui lòng nhập tên thể loại.',
             'name.unique' => 'Tên thể loại này đã tồn tại.',

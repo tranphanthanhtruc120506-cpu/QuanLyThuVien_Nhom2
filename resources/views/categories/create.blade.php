@@ -23,10 +23,6 @@
             <input type="text" id="name" name="name" value="{{ old('name') }}" class="form-control" required>
         </div>
 
-        <div class="mb-3">
-            <label for="description" class="form-label">Mô tả</label>
-            <textarea id="description" name="description" rows="3" class="form-control">{{ old('description') }}</textarea>
-        </div>
 
         <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary">Lưu thể loại</button>
