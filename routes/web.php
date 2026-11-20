@@ -2,6 +2,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowRecordController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ReaderController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\AuthorController as AdminAuthorController;
 use App\Http\Controllers\Admin\BookController as AdminBookController;
@@ -51,6 +53,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Quản lý sách và tác giả (Hào)
     Route::resource('books', AdminBookController::class)->except('show');
     Route::resource('authors', AdminAuthorController::class)->except('show');
+
+    // Hoàn thiện các module đã có controller/view nhưng chưa khai báo route.
+    Route::resource('categories', CategoryController::class)->except('show');
+    Route::get('users', [ReaderController::class, 'index'])->name('users.index');
+    Route::patch('users/{user}/toggle', [ReaderController::class, 'toggle'])->name('users.toggle');
 });
 
 require __DIR__.'/auth.php';
