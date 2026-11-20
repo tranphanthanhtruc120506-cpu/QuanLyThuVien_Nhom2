@@ -49,6 +49,12 @@
                             <i class="bi bi-book me-1"></i> Kho Sách Thư Viện
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('recommendations.*') ? 'active' : '' }}"
+                           href="{{ route('recommendations.index') }}">
+                            <i class="bi bi-stars me-1"></i> Gợi Ý Sách AI
+                        </a>
+                    </li>
 
                     @auth
                         @if(auth()->user()->role === 'admin')
