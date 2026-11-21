@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\BookRecommendationController;
 use App\Http\Controllers\BorrowRecordController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ReaderController;
@@ -18,6 +19,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [BookController::class, 'index'])->name('books.index');
 Route::get('/books', [BookController::class, 'index']);
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
+// Gợi ý sách theo tâm trạng/mục tiêu: khách có thể xem, mượn sách vẫn cần đăng nhập.
+Route::get('/recommendations', [BookRecommendationController::class, 'index'])->name('recommendations.index');
+Route::post('/recommendations', [BookRecommendationController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('recommendations.store');
 
 // Điều hướng trang Dashboard thông minh theo Role
 Route::get('/dashboard', function () {
